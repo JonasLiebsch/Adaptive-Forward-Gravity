@@ -1291,6 +1291,7 @@ def enlargeArray_arithmetic(array,multiplier=2):
 #%%
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
+    from matplotlib.patches import Rectangle
     def randomVar(shape,sigma=10):
         """creates a random normal distributed Topography"""
         from scipy.ndimage import gaussian_filter
@@ -1363,15 +1364,15 @@ if __name__ == '__main__':
     moho=(topo*2670)/(2670-3200)-avg_moho_depth
     ref_lev=np.ones(moho.shape)*(-avg_moho_depth)#average depth of the moho
     prism=createrMultResBody(moho,ref_lev, suplevel=4)
-    grav=adapt_Body(coords,prism,3200-2670,x,y,threshold=10**-4,maxrange=10_000)
+    grav=adapt_Body(coords,prism,3200-2670,x,y,threshold=10**-4,maxrange=100_000)
 
     _,(pl1,pl2)=plt.subplots(2)
     
     plot1=pl1.imshow(moho, extent=[np.min(x),np.max(x),np.min(y),np.max(y)])
     cbar=plt.colorbar(plot1,ax=pl1)
     pl1.set_ylabel('Mohoh height in m')
-    pl1.scatter(coords[0,:],coords[1,:],s=3,marker='+',color=[1,1,1])
-    #plt.imshow(topo, extent=[np.min(x),np.max(x),np.min(y),np.max(y)])
+    pl1.add_patch(Rectangle([np.min(xc),np.min(yc)],np.max(xc)-np.min(xc),np.max(yc)-np.min(yc),fill=False))
+    #pl1.scatter(coords[0,:],coords[1,:],s=3,marker='+',color=[1,1,1])
     plot1=pl2.imshow(grav.reshape((coordx.shape[0],coordx.shape[1])),extent=[np.min(xc),np.max(xc),np.min(yc),np.max(yc)])
     cbar=plt.colorbar(plot1,ax=pl2)
     pl2.set_ylabel('gravity in mgal')    
